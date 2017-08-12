@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DETAILS</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="movieJsonData.js"></script>
+
+	<style type="text/css">
+		
+	#detailid{
+
+		text-align: center;
+		margin-top: 2cm;
+		border: 1px solid gray;
+		padding-top: 1cm;
+		background-color: lightgreen;
+		box-shadow: 10px 10px 5px #888888;
+	}
+	</style>
+</head>
+
+<script type="text/javascript">
+	
+	jQuery(document).ready(function() { 
+ 
+		console.log(window.location.href.split('?')[1].split("=")[1]);
+	var idValue =	window.location.href.split('?')[1].split("=")[1];
+  
+			var output 	= '<div class="row" id="detailid">';
+	 
+			for(i = 0; i < bestPictures.length; i++){
+				if(bestPictures[i].id == idValue){ 
+					output += '<div class="col-md-6 well">';				 
+					output += '<div class="col-md-7">';
+					output += '<img src="'+bestPictures[i].img+'" width="155" height="155">';
+					output += '<h5>'+ bestPictures[i].value + '</h5>';
+					output += '<p>' + bestPictures[i].year + '</p>';
+					output += '</div>';
+					output += '</div>';
+				}
+			}
+			output += '</div>';
+			$('#filter-records').html(output);
+			
+		 
+
+	});
+
+</script>
+<body>
+<div id="detailDiv">
+
+
+<div id="filter-records"></div>
+</body>
+</html>

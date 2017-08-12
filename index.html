@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>POST ADS</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="movieJsonData.js"></script>
+
+
+
+	<style type="text/css">
+		.mysearchbar{
+			text-align: center;
+			margin-top: 1cm;
+		}
+
+		.typeahead{
+			width: 400px;	
+			border-radius: 25px;
+
+		}
+
+		#myid{
+			text-align: center;
+		 	padding-right: 5px;
+		 	background-color: lightblue;
+		 	box-shadow: 10px 10px 5px #888888;
+		  }
+		#movie-search{
+			padding-bottom: 1cm;
+		}  
+	</style>
+		
+</head>
+<body>
+	<div id="movie-search" class="mysearchbar">
+		<input class="typeahead" id="hh" type="text" placeholder="Enter Key to search data">
+	</div>
+ 	<div id="filter-records"></div>
+	<script type="text/javascript" src="typeahead.bundle.js"></script>
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			//debugger;
+			var recentdata 	= localStorage.getItem("recentSearchedData");
+			var pardata 	= (!recentdata) ? undefined : JSON.parse(recentdata);
+			var output 		= '<div class="row">';
+			var i = 0, index = (pardata) ? pardata.length : 0;
+
+
+			for(; i < index; i++){
+				 
+						console.log(pardata[i]);
+						output += '<div class="col-sm-3 col-md-4 col-lg-4 well" id="myid">'; 			 
+						output += '<div class="col-md-7" >';
+						output += '<img src="'+pardata[i].img+'" width="55" height="55" >';
+						output += '<h5>'+ pardata[i].value + '</h5>';
+						output += '<p>' + pardata[i].year + '</p>';
+						output += '</div>';
+						output += '</div>';
+				
+			}
+			output += '</div>';
+			$('#filter-records').html(output);
+
+
+			
+			var pictures = new Bloodhound({
+				datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
+				queryTokenizer: Bloodhound.tokenizers.whitespace,
+				local: $.map(bestPictures, function(d) {
+					return {
+						value: d.value,
+						suggest: d
+					}
+				})
+			});
+			pictures.initialize();
+
+			$("#movie-search .typeahead").typeahead(null, {
+				name: "best-pictures",
+				display: "value",
+				minLength : 3,
+				source: pictures.ttAdapter(),
+				templates: {
+					notFound: [
+						"<div class=empty-message>",
+							"unable to find any Best Picture winners that match the current query",
+						"</div>"
+					].join("\n"),
+					suggestion: function(data) {
+						return '<div style="width:400px; height:70px; background : white; border:1px solid black;"><div style="float: left; display:inline-block;"><img src="'+data.suggest.img+'" width="55" height="65"></div><div style="float: right; display:inline-block;"><div>'+data.suggest.value+'</div><div>'+data.suggest.year+'</div> </div></div>';
+					}
+				}
+			}).on('typeahead:selected', function(obj, datum, name) {
+				var searchData = localStorage.getItem('recentSearchedData');
+				var updatedData = (searchData) ? JSON.parse(searchData) : [];
+				var i = 0, index = updatedData.length, keyNotFound = true;
+				for (; i < index; i++) {
+					if(updatedData[i].id === datum.suggest.id){
+						keyNotFound = false;
+					}
+				}
+				if(keyNotFound){ updatedData.push(datum.suggest); }
+				localStorage.setItem("recentSearchedData", JSON.stringify(updatedData));
+				window.location.href = window.location.origin+'C:/Users/Sandeep/Desktop/MovieDatabase/Detail.html?movieid='+datum.suggest.id;
+			});
+		});
+	</script>
+</body>
+</html>
